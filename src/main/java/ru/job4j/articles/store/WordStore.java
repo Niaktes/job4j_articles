@@ -18,6 +18,8 @@ public class WordStore implements Store<Word>, AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WordStore.class.getSimpleName());
 
+    public static final String ERROR_MESSAGE = "Не удалось выполнить операцию: { }";
+
     private final Properties properties;
 
     private Connection connection;
@@ -38,7 +40,7 @@ public class WordStore implements Store<Word>, AutoCloseable {
                     properties.getProperty("password")
             );
         } catch (SQLException e) {
-            LOGGER.error("Не удалось выполнить операцию: { }", e.getCause());
+            LOGGER.error(ERROR_MESSAGE, e.getCause());
             throw new IllegalStateException();
         }
     }
@@ -49,7 +51,7 @@ public class WordStore implements Store<Word>, AutoCloseable {
             var sql = Files.readString(Path.of("db/scripts", "dictionary.sql"));
             statement.execute(sql);
         } catch (Exception e) {
-            LOGGER.error("Не удалось выполнить операцию: { }", e.getCause());
+            LOGGER.error(ERROR_MESSAGE, e.getCause());
             throw new IllegalStateException();
         }
     }
@@ -60,7 +62,7 @@ public class WordStore implements Store<Word>, AutoCloseable {
             var sql = Files.readString(Path.of("db/scripts", "words.sql"));
             statement.executeLargeUpdate(sql);
         } catch (Exception e) {
-            LOGGER.error("Не удалось выполнить операцию: { }", e.getCause());
+            LOGGER.error(ERROR_MESSAGE, e.getCause());
             throw new IllegalStateException();
         }
     }
@@ -77,7 +79,7 @@ public class WordStore implements Store<Word>, AutoCloseable {
                 model.setId(key.getInt(1));
             }
         } catch (Exception e) {
-            LOGGER.error("Не удалось выполнить операцию: { }", e.getCause());
+            LOGGER.error(ERROR_MESSAGE, e.getCause());
             throw new IllegalStateException();
         }
         return model;
@@ -97,7 +99,7 @@ public class WordStore implements Store<Word>, AutoCloseable {
                 ));
             }
         } catch (Exception e) {
-            LOGGER.error("Не удалось выполнить операцию: { }", e.getCause());
+            LOGGER.error(ERROR_MESSAGE, e.getCause());
             throw new IllegalStateException();
         }
         return words;
