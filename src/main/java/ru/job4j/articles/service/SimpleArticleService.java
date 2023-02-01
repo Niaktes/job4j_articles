@@ -7,8 +7,6 @@ import ru.job4j.articles.model.Word;
 import ru.job4j.articles.service.generator.ArticleGenerator;
 import ru.job4j.articles.store.Store;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.IntStream;
 
 public class SimpleArticleService implements ArticleService {
@@ -26,15 +24,10 @@ public class SimpleArticleService implements ArticleService {
     public void generate(Store<Word> wordStore, int count, Store<Article> articleStore) {
         LOGGER.info("Генерация статей в количестве {}", count);
         var words = wordStore.findAll();
-        List<Article> articlesForStore = new ArrayList<>();
         IntStream.iterate(0, i -> i < count, i -> i + 1)
                 .forEach(i -> {
                     LOGGER.info(ARTICLE_GENERATED, i);
-                    articlesForStore.add(articleGenerator.generate(words));
-                    if (articlesForStore.size() > 50000 || i == count - 1) {
-                        articlesForStore.forEach(articleStore::save);
-                        articlesForStore.clear();
-                    }
+                    articleStore.save(articleGenerator.generate(words));
                 });
     }
 }
